@@ -37,6 +37,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/location" />
+
+    <TextView
+        android:id="@+id/location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Łódź, Polska"
+        android:textSize="26sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
     <TextView
@@ -73,10 +84,10 @@
         android:id="@+id/weatherIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:src="@drawable/partly_cloudy_day_96"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/currTemp"
-        app:layout_constraintTop_toTopOf="@+id/currTemp"
-        android:src="@drawable/partly_cloudy_day_96"/>
+        app:layout_constraintTop_toTopOf="@+id/currTemp" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -111,6 +122,7 @@
                         android:src="@drawable/pressure_gauge_48" />
 
                     <TextView
+                        android:id="@+id/pressure"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="1002"
@@ -147,6 +159,7 @@
                         android:src="@drawable/wind_48" />
 
                     <TextView
+                        android:id="@+id/wind"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="0.72m/s"
@@ -183,11 +196,12 @@
                         android:src="@drawable/moisture_48" />
 
                     <TextView
+                        android:id="@+id/humidity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="18%"
                         android:textAlignment="center"
-                        android:textSize="18sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -222,19 +236,20 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:src="@drawable/mountain_48" />
+                        android:src="@drawable/fog_48" />
 
                     <TextView
+                        android:id="@+id/sky"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="420"
+                        android:text="Clear"
                         android:textAlignment="center"
                         android:textSize="24sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Ground"
+                        android:text="Visibility"
                         android:textAlignment="center"
                         android:textSize="18sp" />
 
@@ -261,11 +276,12 @@
                         android:src="@drawable/morning_48" />
 
                     <TextView
+                        android:id="@+id/sunrise"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="06:20:40"
                         android:textAlignment="center"
-                        android:textSize="18sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -297,11 +313,12 @@
                         android:src="@drawable/night_48" />
 
                     <TextView
+                        android:id="@+id/sunset"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="20:45:20"
                         android:textAlignment="center"
-                        android:textSize="18sp" />
+                        android:textSize="24sp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -339,6 +356,7 @@
                         android:src="@drawable/thermomether_48" />
 
                     <TextView
+                        android:id="@+id/fahrenheit_temp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="70"
@@ -375,16 +393,17 @@
                         android:src="@drawable/fog_48" />
 
                     <TextView
+                        android:id="@+id/longtitude"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Clear"
+                        android:text="500"
                         android:textAlignment="center"
                         android:textSize="24sp" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Visibility"
+                        android:text="Longtitude"
                         android:textAlignment="center"
                         android:textSize="18sp" />
 
@@ -408,9 +427,10 @@
                     <ImageView
                         android:layout_width="match_parent"
                         android:layout_height="48dp"
-                        android:src="@drawable/water_element_48" />
+                        android:src="@drawable/latitude_48" />
 
                     <TextView
+                        android:id="@+id/latitude"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="950"
@@ -420,7 +440,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Sea"
+                        android:text="Latitude"
                         android:textAlignment="center"
                         android:textSize="18sp" />
 
