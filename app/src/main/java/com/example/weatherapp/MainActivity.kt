@@ -4,8 +4,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationBarItemView
 
 class MainActivity : AppCompatActivity() {
+
+    val CITY = "Łódź"
+    val weather_api = "c1b8cca3f8e0025563835d33cad2543e"
 
     private lateinit var bottomNavigationView: BottomNavigationView
 
