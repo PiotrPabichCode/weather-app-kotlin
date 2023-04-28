@@ -1,23 +1,21 @@
 package com.example.weatherapp
 
+import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.github.pwittchen.weathericonview.WeatherIconView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.*
-import java.net.URL
 import org.json.JSONObject
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.round
 
-data class Weather( val main: String, val description: String)
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,6 +23,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val apiKey = "c1b8cca3f8e0025563835d33cad2543e"
         val city = "New York"
         getWeather(city, apiKey)
+    }
+
+    private fun fahrenheitToCelsius(fahrenheit: Double): Double {
+        return round(fahrenheit - 273.15)
     }
 
     private fun getWeather(city: String, apiKey: String) {
@@ -63,24 +65,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 val description = weather.getString("description")
 
                 val main = jsonObject.getJSONObject("main")
-                val current_temp = main.getString("temp") + "C"
-                val min_temp = "Min Temp: " + main.getString("temp_min") + "C"
-                val max_temp = "Max Temp: " + main.getString("temp_max") + "C"
+                val minTempCelsius = fahrenheitToCelsius(main.getString("temp_min").toDouble())
+                val maxTempCelsius = fahrenheitToCelsius(main.getString("temp_max").toDouble())
+                val currTempCelsius = fahrenheitToCelsius(main.getString("temp").toDouble())
+                val current_temp = currTempCelsius.toString() + "°C"
+                val min_temp = "Min: " + minTempCelsius.toString() + "°C"
+                val max_temp = "Max: " + maxTempCelsius.toString() + "°C"
 
-                val locationTextView = requireView().findViewById<TextView>(R.id.current_location)
+//                val locationTextView = requireView().findViewById<TextView>(R.id.current_location)
                 val updatedAtTextView =
-                    requireView().findViewById<TextView>(R.id.updated_at)
-                val descriptionTextView =
-                    requireView().findViewById<TextView>(R.id.description)
+                    requireView().findViewById<TextView>(R.id.updatedAt)
+//                val descriptionTextView =
+//                    requireView().findViewById<TextView>(R.id.description)
                 val currentTempTextView =
-                    requireView().findViewById<TextView>(R.id.current_temp)
-                val minTempTextView = requireView().findViewById<TextView>(R.id.min_temp)
-                val maxTempTextView = requireView().findViewById<TextView>(R.id.max_temp)
+                    requireView().findViewById<TextView>(R.id.currTemp)
+                val minTempTextView = requireView().findViewById<TextView>(R.id.minTemp)
+                val maxTempTextView = requireView().findViewById<TextView>(R.id.maxTemp)
+                val weatherIcon = requireView().findViewById<ImageView>(R.id.weatherIcon)
 
                 // set TextView values
-                locationTextView.text = location
+//                locationTextView.text = location
                 updatedAtTextView.text = updatedAtText
-                descriptionTextView.text = description
+//                descriptionTextView.text = description
                 currentTempTextView.text = current_temp
                 minTempTextView.text = min_temp
                 maxTempTextView.text = max_temp

@@ -22,6 +22,8 @@ class MainActivity : AppCompatActivity() {
         val settingsFragment = SettingsFragment()
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView)
+        bottomNavigationView.background = null
+
         setCurrentFragment(homeFragment)
 
         bottomNavigationView.setOnItemSelectedListener {
