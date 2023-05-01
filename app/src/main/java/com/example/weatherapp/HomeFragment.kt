@@ -1,69 +1,89 @@
 package com.example.weatherapp
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.*
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.round
+import androidx.appcompat.widget.SearchView
+import com.example.weatherapp.databinding.FragmentHomeBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        val apiKey = "c1b8cca3f8e0025563835d33cad2543e"
-        val city = "Lodz"
-       // getWeatherData(city)
-        getWeather(city, apiKey)
+
+    val apiKey = "c1b8cca3f8e0025563835d33cad2543e"
+    var city = "Lodz"
+
+    private lateinit var binding: FragmentHomeBinding
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentHomeBinding.bind(view)
+        getWeather(city)
+        handleSearchAction()
+        handleRefreshAction()
     }
 
-    private fun fahrenheitToCelsius(fahrenheit: Double): Double {
-        return round((fahrenheit - 273.15) * 10.0) / 10.0
-    }
-
-    private fun getWeather(city: String, apiKey: String) {
-        // launch a coroutine on the IO dispatcher
-        lifecycleScope.launch(Dispatchers.IO) {
-            val url = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey"
-            val request = Request.Builder()
-                .url(url)
-                .build()
-            val client = OkHttpClient()
-            val response = client.newCall(request).execute()
-            val json = response.body?.string()
-
-            // update the UI on the main thread
-            withContext(Dispatchers.Main) {
-                // Handle the error
-                if (!response.isSuccessful) {
-                    // Handle the error
-                    return@withContext
+    private fun handleSearchAction() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query != null && query.isNotEmpty()) {
+                    city = query
+                    getWeather(city)
+                    binding.searchView.setQuery("", false)
+                    return true
                 }
+                return false
+            }
 
-                // Parse the JSON response
-                val jsonObject = JSONObject(json)
-                setTextViewValues(jsonObject)
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return false
+            }
+        })
+    }
+
+    private fun handleRefreshAction() {
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            getWeather(city)
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
+    }
+
+    private fun makeRequest(city: String) : Response {
+        val url = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=$apiKey"
+        val request = Request.Builder().url(url).build()
+        val client = OkHttpClient()
+        return client.newCall(request).execute()
+    }
+
+    private fun getWeather(city: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val response = makeRequest(city)
+            if (!response.isSuccessful) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(activity, "Failed to get weather data", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    val json = response.body?.string()
+                    val jsonObject = JSONObject(json)
+                    updateUI(jsonObject)
+                }
             }
         }
     }
 
-    fun downloadWeatherIcon(iconCode: String, imageView: ImageView) {
-        val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
-
-        Glide.with(imageView.context)
-            .load(iconUrl)
-            .into(imageView)
-    }
-
-    private fun setTextViewValues(jsonObject: JSONObject) {
+    private fun updateUI(jsonObject: JSONObject) {
         val sys = jsonObject.getJSONObject("sys")
         val location =
             jsonObject.getString("name") + ", " + sys.getString("country")
@@ -85,8 +105,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val pressure = main.getString("pressure")
         val wind = jsonObject.getJSONObject("wind").getString("speed") + "m/s"
         val humidity = main.getString("humidity") + "%"
-        val longtitude = jsonObject.getJSONObject("coord").getString("lon")
-        val latitude = jsonObject.getJSONObject("coord").getString("lat")
+        val longtitude = (round(jsonObject.getJSONObject("coord").getString("lon").toDouble() * 100) / 100).toString()
+        val latitude = (round(jsonObject.getJSONObject("coord").getString("lat").toDouble() * 100) / 100).toString()
         val sunrise = sys.getLong("sunrise")
         val sunriseText = SimpleDateFormat(
             "hh:mm a",
@@ -102,43 +122,39 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val fh = main.getString("temp")
         val sky_visibility = ((10000.0 - (jsonObject.getJSONObject("clouds").getString("all")).toDouble()) / 100).toString() + "%"
 
-        val locationTextView = requireView().findViewById<TextView>(R.id.location)
-        val updatedAtTextView =
-            requireView().findViewById<TextView>(R.id.updatedAt)
-        val currentTempTextView =
-            requireView().findViewById<TextView>(R.id.currTemp)
-        val minTempTextView = requireView().findViewById<TextView>(R.id.minTemp)
-        val maxTempTextView = requireView().findViewById<TextView>(R.id.maxTemp)
-        val weatherIcon = requireView().findViewById<ImageView>(R.id.weatherIcon)
-        val pressureTextView = requireView().findViewById<TextView>(R.id.pressure)
-        val windTextView = requireView().findViewById<TextView>(R.id.wind)
-        val humidityTextView = requireView().findViewById<TextView>(R.id.humidity)
-        val sunriseTextView = requireView().findViewById<TextView>(R.id.sunrise)
-        val sunsetTextView = requireView().findViewById<TextView>(R.id.sunset)
-        val fahrenheit_tempTextView = requireView().findViewById<TextView>(R.id.fahrenheit_temp)
-        val skyTextView = requireView().findViewById<TextView>(R.id.sky)
-        val longtitudeTextView = requireView().findViewById<TextView>(R.id.longtitude)
-        val latitudeTextView = requireView().findViewById<TextView>(R.id.latitude)
-
         // set TextView values
-        locationTextView.text = location
-        updatedAtTextView.text = updatedAtText
-        currentTempTextView.text = current_temp
-        minTempTextView.text = min_temp
-        maxTempTextView.text = max_temp
+        binding.location.text = location
+        binding.updatedAt.text = updatedAtText
+        binding.currTemp.text = current_temp
+        binding.minTemp.text = min_temp
+        binding.maxTemp.text = max_temp
 
-        pressureTextView.text = pressure
-        windTextView.text = wind
-        humidityTextView.text = humidity
-        longtitudeTextView.text = longtitude
-        sunriseTextView.text = sunriseText
-        sunsetTextView.text = sunsetText
-        fahrenheit_tempTextView.text = fh
-        skyTextView.text = sky_visibility
-        latitudeTextView.text = latitude
+        binding.pressure.text = pressure
+        binding.wind.text = wind
+        binding.humidity.text = humidity
+        binding.longtitude.text = longtitude
+        binding.sunrise.text = sunriseText
+        binding.sunset.text = sunsetText
+        binding.fahrenheitTemp.text = fh
+        binding.sky.text = sky_visibility
+        binding.latitude.text = latitude
 
         val weatherIconCheck = jsonObject.getJSONArray("weather").getJSONObject(0).getString("icon")
 
-        downloadWeatherIcon(weatherIconCheck, weatherIcon)
+        downloadWeatherIcon(weatherIconCheck, binding.weatherIcon)
+
+        binding.weatherLayout.visibility = View.VISIBLE
+    }
+
+    private fun fahrenheitToCelsius(fahrenheit: Double): Double {
+        return round((fahrenheit - 273.15) * 10.0) / 10.0
+    }
+
+    private fun downloadWeatherIcon(iconCode: String, imageView: ImageView) {
+        val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
+
+        Glide.with(imageView.context)
+            .load(iconUrl)
+            .into(imageView)
     }
 }
