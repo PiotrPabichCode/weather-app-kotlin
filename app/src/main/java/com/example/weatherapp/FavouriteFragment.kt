@@ -8,35 +8,23 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.example.weatherapp.databinding.FragmentFavouriteBinding
+import com.example.weatherapp.databinding.FragmentHomeBinding
+import kotlinx.coroutines.*
 
 class FavouriteFragment : Fragment(R.layout.fragment_favourite) {
 
     private lateinit var utils: Utils
-    private lateinit var searchBar: SearchView
-    private lateinit var recyclerView: RecyclerView
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_favourite, container, false)
-        recyclerView = view.findViewById(R.id.city_list)
-        recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        return view
-    }
-
+    private lateinit var binding: FragmentFavouriteBinding
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        searchBar = view.findViewById(R.id.searchView)
+        binding = FragmentFavouriteBinding.bind(view)
         utils = Utils()
-        val cityList = view.findViewById<RecyclerView>(R.id.city_list)
-        val layoutManager = LinearLayoutManager(requireContext())
-        val adapter = CityListAdapter(ArrayList())
-        cityList.layoutManager = layoutManager
-        cityList.adapter = adapter
+        binding.rvCityList.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvCityList.adapter = CityListAdapter(ArrayList())
 
-        searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -49,11 +37,10 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite) {
     }
 
     fun updateSearchResults(query: String) {
-        GlobalScope.launch {
+        CoroutineScope(Dispatchers.IO).launch {
             val cities = utils.searchCities(query)
-            val adapter = CityAdapter(cities)
             withContext(Dispatchers.Main) {
-                recyclerView.adapter = adapter
+                binding.rvCityList.adapter = CityAdapter(cities)
             }
         }
     }

@@ -14,6 +14,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val homeFragment = HomeFragment()
+        val weatherForecastFragment = WeatherForecastFragment()
         val favouriteFragment = FavouriteFragment()
         val settingsFragment = SettingsFragment()
 
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
             when(it.itemId) {
 
                 R.id.home -> setCurrentFragment(homeFragment)
+                R.id.forecast -> setCurrentFragment(weatherForecastFragment)
 
                 R.id.favourite -> setCurrentFragment(favouriteFragment)
 

@@ -10,7 +10,7 @@ class CityAdapter(private val cities: List<City>) : RecyclerView.Adapter<CityAda
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nameTextView: TextView = itemView.findViewById(R.id.city_name)
-        val idTextView: TextView = itemView.findViewById(R.id.city_temp)
+        val cityTempTextView: TextView = itemView.findViewById(R.id.city_temp)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -21,7 +21,7 @@ class CityAdapter(private val cities: List<City>) : RecyclerView.Adapter<CityAda
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val city = cities[position]
         holder.nameTextView.text = city.name
-        holder.idTextView.text = city.temp.toString() + "°C"
+        holder.cityTempTextView.text = city.temp.toString() + "°C"
     }
 
     override fun getItemCount() = cities.size

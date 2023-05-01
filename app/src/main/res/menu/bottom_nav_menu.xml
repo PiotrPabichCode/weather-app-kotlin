@@ -7,15 +7,15 @@
         android:id="@+id/home"/>
     <item
         android:title=""
-        android:icon="@drawable/baseline_favorite_border_24"
-        android:id="@+id/favourite"/>
+        android:icon="@drawable/baseline_wb_sunny_24"
+        android:id="@+id/forecast"/>
 
     <item
         android:title=""
-        android:icon="@drawable/baseline_bed_24"
-        android:id="@+id/settings"/>
+        android:icon="@drawable/baseline_favorite_border_24"
+        android:id="@+id/favourite"/>
     <item
         android:title=""
-        android:icon="@drawable/baseline_person_24"
-        android:id="@+id/person"/>
+        android:icon="@drawable/baseline_settings_24"
+        android:id="@+id/settings"/>
 </menu>
