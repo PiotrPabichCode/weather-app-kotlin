@@ -29,11 +29,8 @@ class MainActivity : AppCompatActivity() {
 
                 R.id.home -> setCurrentFragment(homeFragment)
                 R.id.forecast -> setCurrentFragment(weatherForecastFragment)
-
                 R.id.favourite -> setCurrentFragment(favouriteFragment)
-
                 R.id.settings -> setCurrentFragment(settingsFragment)
-
             }
 
             true

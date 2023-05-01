@@ -90,7 +90,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         val updatedAt = jsonObject.getLong("dt")
         val updatedAtText = "Updated at: " + SimpleDateFormat(
-            "dd/MM/yyyy hh:mm a",
+            "dd/MM/yyyy HH:mm",
             Locale.getDefault()
         ).format(Date(updatedAt * 1000))
 
@@ -109,13 +109,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val latitude = (round(jsonObject.getJSONObject("coord").getString("lat").toDouble() * 100) / 100).toString()
         val sunrise = sys.getLong("sunrise")
         val sunriseText = SimpleDateFormat(
-            "hh:mm a",
+            "HH:mm",
             Locale.getDefault()
         ).format(Date(sunrise * 1000))
 
         val sunset = sys.getLong("sunset")
         val sunsetText = SimpleDateFormat(
-            "hh:mm a",
+            "HH:mm",
             Locale.getDefault()
         ).format(Date(sunset * 1000))
 

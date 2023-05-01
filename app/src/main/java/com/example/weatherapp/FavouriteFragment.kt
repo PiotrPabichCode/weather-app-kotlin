@@ -1,15 +1,11 @@
 package com.example.weatherapp
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherapp.databinding.FragmentFavouriteBinding
-import com.example.weatherapp.databinding.FragmentHomeBinding
 import kotlinx.coroutines.*
 
 class FavouriteFragment : Fragment(R.layout.fragment_favourite) {
@@ -21,9 +17,13 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentFavouriteBinding.bind(view)
         utils = Utils()
-        binding.rvCityList.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvCityList.layoutManager = LinearLayoutManager(view.context)
         binding.rvCityList.adapter = CityListAdapter(ArrayList())
 
+        handleSearchView()
+    }
+
+    private fun handleSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
@@ -40,7 +40,7 @@ class FavouriteFragment : Fragment(R.layout.fragment_favourite) {
         CoroutineScope(Dispatchers.IO).launch {
             val cities = utils.searchCities(query)
             withContext(Dispatchers.Main) {
-                binding.rvCityList.adapter = CityAdapter(cities)
+                binding.rvCityList.adapter = CityListAdapter(cities)
             }
         }
     }

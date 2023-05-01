@@ -25,11 +25,14 @@ class Utils {
                 val name = result.asJsonObject.get("name").asString
                 val main = result.asJsonObject.getAsJsonObject("main")
                 val temp = fahrenheitToCelsius(main.get("temp").asDouble)
-                cities.add(City(name, temp))
+                val sys = result.asJsonObject.getAsJsonObject("sys")
+                val country = sys.get("country").asString
+                cities.add(City(name, country, temp))
             }
         }
         cities
     }
+
 
     private fun fahrenheitToCelsius(fahrenheit: Double): Double {
         return round((fahrenheit - 273.15) * 10.0) / 10.0

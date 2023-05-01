@@ -3,11 +3,9 @@ package com.example.weatherapp
 import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
 import com.example.weatherapp.databinding.FragmentWeatherForecastBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +29,7 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentWeatherForecastBinding.bind(view)
+        binding.weatherForecastRV.layoutManager = LinearLayoutManager(view.context)
 
         getWeather(city)
     }
@@ -55,7 +54,6 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
                 withContext(Dispatchers.Main) {
                     if(isAdded) {
                         val adapter = WeatherForecastAdapter(createDays(jsonObject, requireContext()))
-                        binding.weatherForecastRV.layoutManager = LinearLayoutManager(requireContext())
                         binding.weatherForecastRV.adapter = adapter
                     }
 
@@ -83,13 +81,5 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
 
     private fun fahrenheitToCelsius(fahrenheit: Double): Double {
         return round((fahrenheit - 273.15) * 10.0) / 10.0
-    }
-
-    private fun downloadWeatherIcon(iconCode: String, imageView: ImageView, context: Context) {
-        val iconUrl = "https://openweathermap.org/img/wn/$iconCode.png"
-
-        Glide.with(context)
-            .load(iconUrl)
-            .into(imageView)
     }
 }
