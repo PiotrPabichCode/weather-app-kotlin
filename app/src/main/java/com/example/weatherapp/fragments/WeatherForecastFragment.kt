@@ -1,12 +1,20 @@
-package com.example.weatherapp
+package com.example.weatherapp.fragments
 
-import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.R
+import com.example.weatherapp.adapters.WeatherForecastAdapter
+import com.example.weatherapp.data.WeatherForecastDay
 import com.example.weatherapp.databinding.FragmentWeatherForecastBinding
+import com.example.weatherapp.utils.Constants
+import com.example.weatherapp.utils.Utils.fahrenheitToCelsius
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -17,25 +25,33 @@ import okhttp3.Response
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.math.round
 
 class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
-
+    private val mainVM by activityViewModels<MainViewModel>()
     private lateinit var binding: FragmentWeatherForecastBinding
-
-    val apiKey = "c1b8cca3f8e0025563835d33cad2543e"
-    var city = "Lodz"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentWeatherForecastBinding.bind(view)
         binding.weatherForecastRV.layoutManager = LinearLayoutManager(view.context)
 
-        getWeather(city)
+        getWeather(mainVM.homeCity)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("MAIN HOME: ", mainVM.homeCity)
+        getWeather(mainVM.homeCity)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("MAIN HOME: ", mainVM.homeCity)
+        getWeather(mainVM.homeCity)
     }
 
     private fun makeRequest(city: String) : Response {
-        val url = "https://pro.openweathermap.org/data/2.5/forecast/climate?q=$city&appid=$apiKey"
+        val url = "https://pro.openweathermap.org/data/2.5/forecast/climate?q=$city&appid=${Constants.API_KEY}"
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
         return client.newCall(request).execute()
@@ -53,7 +69,7 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
                 val jsonObject = JSONObject(json)
                 withContext(Dispatchers.Main) {
                     if(isAdded) {
-                        val adapter = WeatherForecastAdapter(createDays(jsonObject, requireContext()))
+                        val adapter = WeatherForecastAdapter(createDays(jsonObject))
                         binding.weatherForecastRV.adapter = adapter
                     }
 
@@ -62,7 +78,7 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
         }
     }
 
-    private fun createDays(jsonObject: JSONObject, context: Context): List<WeatherForecastDay> = buildList {
+    private fun createDays(jsonObject: JSONObject): List<WeatherForecastDay> = buildList {
         val jsonArray = jsonObject.getJSONArray("list")
         for(i in 0 until jsonArray.length()) {
             val dayObject = jsonArray.getJSONObject(i)
@@ -77,9 +93,5 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
             val newDay = WeatherForecastDay(dayName, rain, imageURL,minTemp,maxTemp)
             add(newDay)
         }
-    }
-
-    private fun fahrenheitToCelsius(fahrenheit: Double): Double {
-        return round((fahrenheit - 273.15) * 10.0) / 10.0
     }
 }

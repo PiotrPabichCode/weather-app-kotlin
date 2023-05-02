@@ -1,8 +1,9 @@
-package com.example.weatherapp
+package com.example.weatherapp.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.example.weatherapp.R
 import com.example.weatherapp.databinding.FragmentSettingsBinding
 
 class SettingsFragment : Fragment(R.layout.fragment_settings) {

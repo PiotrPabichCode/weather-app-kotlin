@@ -1,8 +1,9 @@
-package com.example.weatherapp
+package com.example.weatherapp.activities
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.preference.PreferenceFragmentCompat
+import com.example.weatherapp.R
 
 class SettingsActivity : AppCompatActivity() {
 

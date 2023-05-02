@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:id="@+id/swipeRefreshLayout"
     android:background="@drawable/background"
-    tools:context=".HomeFragment">
+    tools:context=".fragments.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/wrapper"

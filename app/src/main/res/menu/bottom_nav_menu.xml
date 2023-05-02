@@ -16,6 +16,10 @@
         android:id="@+id/favourite"/>
     <item
         android:title=""
+        android:icon="@drawable/baseline_add_24"
+        android:id="@+id/add"/>
+    <item
+        android:title=""
         android:icon="@drawable/baseline_settings_24"
         android:id="@+id/settings"/>
 </menu>

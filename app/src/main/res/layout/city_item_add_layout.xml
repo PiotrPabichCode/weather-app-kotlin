@@ -7,25 +7,32 @@
         <TextView
             android:id="@+id/nameTV"
             android:gravity="center"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:ellipsize="end"/>
 
         <TextView
             android:id="@+id/tempTV"
             android:gravity="center"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:singleLine="true"
+            android:ellipsize="end"/>
 
         <Button
             android:id="@+id/addBTN"
             android:layout_weight="2"
             android:layout_width="0dp"
+            android:layout_gravity="center"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
             android:layout_height="match_parent"
             android:shadowRadius="50"
-            android:text="Add city"/>
+            android:text="Add city"
+            android:singleLine="true"
+            android:ellipsize="end"/>
 
 </LinearLayout>
