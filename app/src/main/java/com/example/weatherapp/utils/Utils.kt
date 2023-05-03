@@ -1,5 +1,7 @@
 package com.example.weatherapp.utils
 
+import android.util.Log
+import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.data.FavouriteCity
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -11,7 +13,7 @@ import kotlin.math.round
 
 object Utils {
 
-    suspend fun searchCities(query: String): List<FavouriteCity> = withContext(Dispatchers.IO) {
+    suspend fun searchCities(query: String, mainVM: MainViewModel): List<FavouriteCity> = withContext(Dispatchers.IO) {
         val url = "https://api.openweathermap.org/data/2.5/find?q=$query&type=like&appid=${Constants.API_KEY}"
         val client = OkHttpClient()
         val request = Request.Builder().url(url).build()
@@ -24,7 +26,7 @@ object Utils {
                 results.forEach { result ->
                     val name = result.asJsonObject.get("name").asString
                     val main = result.asJsonObject.getAsJsonObject("main")
-                    val temp = fahrenheitToCelsius(main.get("temp").asDouble)
+                    val temp = convertKelvin(main.get("temp").asDouble, mainVM)
                     val sys = result.asJsonObject.getAsJsonObject("sys")
                     val country = sys.get("country").asString
                     val city = FavouriteCity(name = name, country = country, temp = temp)
@@ -35,10 +37,12 @@ object Utils {
         cities
     }
 
-
-
-    fun fahrenheitToCelsius(fahrenheit: Double): Double {
-        return round((fahrenheit - 273.15) * 10.0) / 10.0
+    fun convertKelvin(kelvin: Double, mainVM: MainViewModel): Double {
+        if(mainVM.isFahrenheitMode) {
+            return round(((kelvin - 273.15) * 1.8 + 32)  * 10.0) / 10.0
+        } else {
+            return round((kelvin - 273.15) * 10.0) / 10.0
+        }
     }
 
 }

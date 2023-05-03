@@ -13,7 +13,7 @@ import com.example.weatherapp.adapters.WeatherForecastAdapter
 import com.example.weatherapp.data.WeatherForecastDay
 import com.example.weatherapp.databinding.FragmentWeatherForecastBinding
 import com.example.weatherapp.utils.Constants
-import com.example.weatherapp.utils.Utils.fahrenheitToCelsius
+import com.example.weatherapp.utils.Utils.convertKelvin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -69,7 +69,7 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
                     if(isAdded) {
                         binding.progressBar.visibility = View.VISIBLE
                         binding.weatherForecastRV.visibility = View.GONE
-                        val adapter = WeatherForecastAdapter(createDays(jsonObject))
+                        val adapter = WeatherForecastAdapter(createDays(jsonObject), mainVM)
                         binding.weatherForecastRV.adapter = adapter
                         binding.progressBar.visibility = View.GONE
                         binding.weatherForecastRV.visibility = View.VISIBLE
@@ -85,8 +85,8 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
         for(i in 0 until jsonArray.length()) {
             val dayObject = jsonArray.getJSONObject(i)
             val dayName = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(Date(dayObject.getLong("dt") * 1000))
-            val minTemp = fahrenheitToCelsius(dayObject.getJSONObject("temp").getDouble("min"))
-            val maxTemp = fahrenheitToCelsius(dayObject.getJSONObject("temp").getDouble("max"))
+            val minTemp = convertKelvin(dayObject.getJSONObject("temp").getDouble("min"), mainVM)
+            val maxTemp = convertKelvin(dayObject.getJSONObject("temp").getDouble("max"), mainVM)
             val weatherArray = dayObject.getJSONArray("weather")
             val icon = weatherArray.getJSONObject(0).getString("icon")
             val rain = dayObject.optDouble("rain", 0.0)

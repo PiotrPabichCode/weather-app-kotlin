@@ -11,7 +11,7 @@ import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.data.FavouriteCity
 import com.example.weatherapp.databinding.CityItemAddLayoutBinding
 
-class AddCityAdapter(private val cities: List<FavouriteCity>, private val viewModel: MainViewModel) : RecyclerView.Adapter<AddCityAdapter.AddCityViewHolder>() {
+class AddCityAdapter(private val cities: List<FavouriteCity>, private val mainVM: MainViewModel) : RecyclerView.Adapter<AddCityAdapter.AddCityViewHolder>() {
 
     private lateinit var context: Context
 
@@ -32,9 +32,10 @@ class AddCityAdapter(private val cities: List<FavouriteCity>, private val viewMo
     override fun onBindViewHolder(holder: AddCityViewHolder, position: Int) {
         val city = cities[position]
         holder.nameTV.text = "${city.name}, ${city.country}"
-        holder.tempTV.text = "${city.temp}°C"
+        val tempUnit = if (mainVM.isFahrenheitMode) "°F" else "°C"
+        holder.tempTV.text = "${city.temp}$tempUnit"
         holder.addBTN.setOnClickListener {
-            viewModel.addCity(city)
+            mainVM.addCity(city)
             Toast.makeText(context, "Added: ${city.name}, ${city.country}", Toast.LENGTH_SHORT).show()
         }
     }

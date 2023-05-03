@@ -14,7 +14,7 @@ import com.example.weatherapp.R
 import com.example.weatherapp.data.WeatherHomeData
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.utils.Constants
-import com.example.weatherapp.utils.Utils.fahrenheitToCelsius
+import com.example.weatherapp.utils.Utils.convertKelvin
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import okhttp3.*
@@ -116,13 +116,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         ).format(Date(updatedAt * 1000))
 
         val main = data.main
-        val minTemp = fahrenheitToCelsius(main.temp_min)
-        val maxTemp = fahrenheitToCelsius(main.temp_max)
-        val currTemp = fahrenheitToCelsius(main.temp)
+        val minTemp = convertKelvin(main.temp_min, mainVM)
+        val maxTemp = convertKelvin(main.temp_max, mainVM)
+        val currTemp = convertKelvin(main.temp, mainVM)
+        Log.d("CURR TEMP: ", currTemp.toString())
 
-        val currTempText = "$currTemp°C"
-        val minTempText = "Min: $minTemp°C"
-        val maxTempText = "Max: $maxTemp°C"
+        val tempUnit = if (mainVM.isFahrenheitMode) "°F" else "°C"
+        val currTempText = "$currTemp$tempUnit"
+        val minTempText = "Min: $minTemp$tempUnit"
+        val maxTempText = "Max: $maxTemp$tempUnit"
 
         val pressure = main.pressure
         val wind = "${data.wind.speed} m/s"
@@ -141,7 +143,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             Locale.getDefault()
         ).format(Date(sunset * 1000))
 
-        val fh = main.temp
+        val kTemp = main.temp
+        mainVM.kelvinTemp = kTemp
         val sky = (10000.0 - data.clouds.all) / 100
         val skyText = "$sky %"
 
@@ -157,7 +160,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         binding.longtitude.text = longitude
         binding.sunrise.text = sunriseText
         binding.sunset.text = sunsetText
-        binding.fahrenheitTemp.text = fh.toString()
+        binding.kelvinTemp.text = kTemp.toString()
         binding.sky.text = skyText
         binding.latitude.text = latitude
 

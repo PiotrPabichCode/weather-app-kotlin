@@ -3,7 +3,6 @@ package com.example.weatherapp
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.weatherapp.data.FavouriteCity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -12,10 +11,14 @@ import kotlinx.coroutines.withContext
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = FavouriteCitiesRepository(app.applicationContext)
-    var homeCity: String = "Lodz"
+
+    var homeCity: String = ""
+    var intervalTime: Int = 0
+    var isFahrenheitMode: Boolean = false
     var updateHomeData : Boolean = false
     var isProgressBar : Boolean = true
     var favouriteCities : ArrayList<FavouriteCity> = arrayListOf()
+    var kelvinTemp: Double = 0.0
 
     fun updateFavouriteCities() {
         GlobalScope.launch {

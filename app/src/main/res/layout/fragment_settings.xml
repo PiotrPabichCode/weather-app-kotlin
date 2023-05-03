@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background"
-    tools:context=".fragments.SettingsFragment">
+    tools:context=".fragments.SettingsFragment"
+    android:id="@+id/settingsLayout">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -64,18 +65,18 @@
                 </ImageView>
 
                 <TextView
-                    android:id="@+id/kelvinTV"
-                    android:layout_marginStart="20dp"
+                    android:id="@+id/fahrenheitTV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
+                    android:layout_marginStart="20dp"
                     android:layout_toEndOf="@+id/kelvinIV"
+                    android:text="Fahrenheit mode"
                     android:textColor="@color/white"
-                    android:textStyle="bold"
-                    android:text="Kelvin mode" />
+                    android:textStyle="bold" />
 
                 <Switch
-                    android:id="@+id/kelvinSwitch"
+                    android:id="@+id/fahrenheitSwitch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -119,7 +120,7 @@
                     android:hint="Enter time"
                     android:textAlignment="center"
                     android:ems="10"
-                    android:inputType="time" />
+                    android:inputType="number" />
 
             </RelativeLayout>
 

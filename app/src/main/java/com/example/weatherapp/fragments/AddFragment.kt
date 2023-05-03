@@ -50,7 +50,7 @@ class AddFragment : Fragment(R.layout.fragment_add) {
 
     fun updateSearchResults(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val cities = searchCities(query)
+            val cities = searchCities(query, mainVM)
             withContext(Dispatchers.Main) {
                 binding.rvCityList.adapter = AddCityAdapter(cities, mainVM)
             }
