@@ -6,7 +6,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.R
@@ -34,7 +33,6 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentWeatherForecastBinding.bind(view)
         binding.weatherForecastRV.layoutManager = LinearLayoutManager(view.context)
-
         getWeather(mainVM.homeCity)
     }
 
@@ -69,8 +67,12 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
                 val jsonObject = JSONObject(json)
                 withContext(Dispatchers.Main) {
                     if(isAdded) {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.weatherForecastRV.visibility = View.GONE
                         val adapter = WeatherForecastAdapter(createDays(jsonObject))
                         binding.weatherForecastRV.adapter = adapter
+                        binding.progressBar.visibility = View.GONE
+                        binding.weatherForecastRV.visibility = View.VISIBLE
                     }
 
                 }

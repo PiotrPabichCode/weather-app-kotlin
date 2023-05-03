@@ -42,6 +42,7 @@ class FavouriteCitiesAdapter(private var cities: ArrayList<FavouriteCity>, priva
         }
         holder.homeBTN.setOnClickListener {
             Log.d("HOME CITY: ", "new home City")
+            viewModel.updateHomeData = true
             viewModel.setHomeCity(city)
             Toast.makeText(context, "New home: ${city.name}, ${city.country}", Toast.LENGTH_SHORT).show()
         }

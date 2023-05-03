@@ -4,17 +4,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
-import okhttp3.*
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.math.round
 import androidx.appcompat.widget.SearchView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import com.bumptech.glide.Glide
 import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.data.WeatherHomeData
@@ -22,10 +16,12 @@ import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.utils.Constants
 import com.example.weatherapp.utils.Utils.fahrenheitToCelsius
 import com.google.gson.Gson
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import okhttp3.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.math.round
+
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
     private val mainVM by activityViewModels<MainViewModel>()
@@ -34,16 +30,27 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
+        Log.d("HOME FRAGMENT ON VIEW CREATED: ", "BINDING CREATED")
         getWeather(mainVM.homeCity)
         handleSearchAction()
         handleRefreshAction()
     }
 
-    override fun onStart() {
-        super.onStart()
-        Log.d("ON START: ", "1")
-        getWeather(mainVM.homeCity)
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("HOME FRAGMENT ON DESTROY: ", "1")
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("HOME FRAGMENT ON DESTROY VIEW: ", "1")
+    }
+
+//    override fun onResume() {
+//        super.onResume()
+//        Log.d("ON RESUME: ", "1")
+//        getWeather(mainVM.homeCity)
+//    }
 
     private fun handleSearchAction() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -89,8 +96,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             } else {
                 withContext(Dispatchers.Main) {
+                    binding.progressBar.visibility = View.VISIBLE
                     val data = Gson().fromJson(response.body?.charStream(), WeatherHomeData::class.java)
                     updateUI(data)
+                    binding.progressBar.visibility = View.GONE
                 }
             }
         }
@@ -154,11 +163,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         val weatherIcon = data.weather[0].icon
         downloadWeatherIcon(weatherIcon, binding.weatherIcon)
-        binding.weatherLayout.visibility = View.VISIBLE
-    }
-
-    fun getLocation() : String {
-        return binding.location.toString()
     }
 
     private fun downloadWeatherIcon(iconCode: String, imageView: ImageView) {

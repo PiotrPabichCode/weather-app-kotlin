@@ -13,6 +13,8 @@ import kotlinx.coroutines.withContext
 class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = FavouriteCitiesRepository(app.applicationContext)
     var homeCity: String = "Lodz"
+    var updateHomeData : Boolean = false
+    var isProgressBar : Boolean = true
     var favouriteCities : ArrayList<FavouriteCity> = arrayListOf()
 
     fun updateFavouriteCities() {

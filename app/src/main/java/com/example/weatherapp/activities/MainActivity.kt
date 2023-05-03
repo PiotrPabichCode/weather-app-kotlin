@@ -1,62 +1,86 @@
 package com.example.weatherapp.activities
 
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.View
+import android.widget.ProgressBar
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.weatherapp.MainViewModel
 import com.example.weatherapp.R
+import com.example.weatherapp.databinding.ActivityMainBinding
 import com.example.weatherapp.fragments.*
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : AppCompatActivity() {
     private val mainVM by lazy {
         ViewModelProvider(this).get(MainViewModel::class.java)
     }
 
-    private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var currentFragment: Fragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        Log.d("ON CREATE MAIN ACTIVITY", "1")
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
-        var homeFragment = HomeFragment()
+        val homeFragment = HomeFragment()
+        Log.d("ON CREATE MAIN ACTIVITY", "NEW HOME FRAGMENT")
         val weatherForecastFragment = WeatherForecastFragment()
         val favouriteFragment = FavouriteFragment()
         val addFragment = AddFragment()
         val settingsFragment = SettingsFragment()
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView)
-        bottomNavigationView.background = null
+        binding.bottomNavigationView.background = null
 
-        setCurrentFragment(homeFragment)
+        if (savedInstanceState == null) {
+            currentFragment = homeFragment
+            setCurrentFragment(currentFragment)
+        } else {
+            currentFragment = supportFragmentManager.getFragment(
+                savedInstanceState,
+                "currentFragment"
+            ) ?: homeFragment
+            setCurrentFragment(currentFragment)
+        }
 
-        bottomNavigationView.setOnItemSelectedListener {
-
-            when(it.itemId) {
-
+        binding.bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            val fragment = when (menuItem.itemId) {
                 R.id.home -> {
-                    if(mainVM.homeCity != homeFragment.getLocation()) {
-                        val newHomeFragment = HomeFragment()
-                        setCurrentFragment(newHomeFragment)
-                        homeFragment = newHomeFragment
+                    if (mainVM.updateHomeData) {
+                        mainVM.updateHomeData = false
+                        HomeFragment()
                     } else {
-                        setCurrentFragment(homeFragment)
+                        homeFragment
                     }
                 }
-                R.id.forecast -> setCurrentFragment(weatherForecastFragment)
-                R.id.favourite -> setCurrentFragment(favouriteFragment)
-                R.id.add -> setCurrentFragment(addFragment)
-                R.id.settings -> setCurrentFragment(settingsFragment)
+                R.id.forecast -> weatherForecastFragment
+                R.id.favourite -> favouriteFragment
+                R.id.add -> addFragment
+                R.id.settings -> settingsFragment
+                else -> currentFragment
+            }
+
+            if (fragment != currentFragment) {
+                currentFragment = fragment
+                setCurrentFragment(currentFragment)
             }
 
             true
-
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        supportFragmentManager.putFragment(outState, "currentFragment", currentFragment)
+    }
+
     private fun setCurrentFragment(fragment: Fragment) = supportFragmentManager.beginTransaction().apply {
-        replace(R.id.flFragment, fragment)
+        replace(binding.flFragment.id, fragment)
         commit()
     }
 }
