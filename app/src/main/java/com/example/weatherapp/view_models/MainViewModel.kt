@@ -1,9 +1,14 @@
-package com.example.weatherapp
+package com.example.weatherapp.view_models
 
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import com.example.weatherapp.data.FavouriteCity
+import com.example.weatherapp.data.entities.FavouriteCity
+import com.example.weatherapp.data.entities.WeatherForecastDay
+import com.example.weatherapp.data.entities.WeatherHomeData
+import com.example.weatherapp.repositories.FavouriteCitiesRepository
+import com.example.weatherapp.repositories.WeatherForecastRepository
+import com.example.weatherapp.repositories.WeatherHomeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -11,6 +16,8 @@ import kotlinx.coroutines.withContext
 
 class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val repo = FavouriteCitiesRepository(app.applicationContext)
+    private val repo1 = WeatherForecastRepository(app.applicationContext)
+    private val repo2 = WeatherHomeRepository(app.applicationContext)
 
     var homeCity: String = ""
     var intervalTime: Int = 0
@@ -24,6 +31,28 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
         GlobalScope.launch {
             withContext(Dispatchers.IO) {
                 favouriteCities = ArrayList(repo.getAll())
+            }
+        }
+    }
+
+    suspend fun saveHomeWeatherData(weatherHomeData: WeatherHomeData) = withContext(Dispatchers.IO) {
+        repo2.dropDatabase()
+        repo2.insert(weatherHomeData)
+    }
+
+    suspend fun getHomeWeatherData() : WeatherHomeData = withContext(Dispatchers.IO) {
+        return@withContext repo2.getData()
+    }
+
+    suspend fun getWeatherForecastPrediction() : List<WeatherForecastDay> = withContext(Dispatchers.IO){
+        return@withContext repo1.getAll()
+    }
+
+    fun saveWeatherForecastPrediction(weatherForecastDays: List<WeatherForecastDay>) {
+        GlobalScope.launch {
+            withContext(Dispatchers.IO) {
+                repo1.dropDatabase() // delete old records
+                repo1.insertAll(weatherForecastDays)
             }
         }
     }

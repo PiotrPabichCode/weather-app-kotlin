@@ -1,14 +1,14 @@
-package com.example.weatherapp
+package com.example.weatherapp.repositories
 
 import android.content.Context
-import com.example.weatherapp.data.FavouriteCity
-import com.example.weatherapp.data.FavouriteCityDao
-import com.example.weatherapp.data.FavouriteCityDb
+import com.example.weatherapp.data.entities.FavouriteCity
+import com.example.weatherapp.data.dao.FavouriteCityDao
+import com.example.weatherapp.data.UserDatabaseDb
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class FavouriteCitiesRepository(context: Context): FavouriteCityDao {
-    private val dao = FavouriteCityDb.getInstance(context).FavouriteCityDao()
+    private val dao = UserDatabaseDb.getInstance(context).FavouriteCityDao()
 
     override suspend fun insertAll(favouriteCities: List<FavouriteCity>) = withContext(Dispatchers.IO) {
         dao.insertAll(favouriteCities)

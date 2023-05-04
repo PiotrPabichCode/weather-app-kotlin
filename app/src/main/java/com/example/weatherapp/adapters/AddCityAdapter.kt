@@ -1,14 +1,14 @@
 package com.example.weatherapp.adapters
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.example.weatherapp.MainViewModel
-import com.example.weatherapp.data.FavouriteCity
+import com.example.weatherapp.R
+import com.example.weatherapp.view_models.MainViewModel
+import com.example.weatherapp.data.entities.FavouriteCity
 import com.example.weatherapp.databinding.CityItemAddLayoutBinding
 
 class AddCityAdapter(private val cities: List<FavouriteCity>, private val mainVM: MainViewModel) : RecyclerView.Adapter<AddCityAdapter.AddCityViewHolder>() {
@@ -22,7 +22,6 @@ class AddCityAdapter(private val cities: List<FavouriteCity>, private val mainVM
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddCityViewHolder {
-        Log.d("ON CREATE: ", "onCreateViewHolder")
         context = parent.context
         val inflater = LayoutInflater.from(parent.context)
         val rowBinding = CityItemAddLayoutBinding.inflate(inflater, parent, false)

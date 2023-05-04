@@ -2,11 +2,12 @@ package com.example.weatherapp.fragments
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.adapters.AddCityAdapter
 import com.example.weatherapp.databinding.FragmentAddBinding
@@ -50,9 +51,15 @@ class AddFragment : Fragment(R.layout.fragment_add) {
 
     fun updateSearchResults(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val cities = searchCities(query, mainVM)
-            withContext(Dispatchers.Main) {
-                binding.rvCityList.adapter = AddCityAdapter(cities, mainVM)
+            try {
+                val cities = searchCities(query, mainVM)
+                withContext(Dispatchers.Main) {
+                    binding.rvCityList.adapter = AddCityAdapter(cities, mainVM)
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(activity, "No internet connection. Try again later", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

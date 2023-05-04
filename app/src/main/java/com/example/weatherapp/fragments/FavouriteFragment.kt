@@ -5,7 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.adapters.FavouriteCitiesAdapter
 import com.example.weatherapp.databinding.FragmentFavouriteBinding

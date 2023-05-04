@@ -9,9 +9,9 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
-import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.R
-import com.example.weatherapp.data.WeatherHomeData
+import com.example.weatherapp.data.entities.WeatherHomeData
 import com.example.weatherapp.databinding.FragmentHomeBinding
 import com.example.weatherapp.utils.Constants
 import com.example.weatherapp.utils.Utils.convertKelvin
@@ -34,6 +34,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         getWeather(mainVM.homeCity)
         handleSearchAction()
         handleRefreshAction()
+
+        // Thread
+//        val timer = Timer()
+//        timer.scheduleAtFixedRate(object: TimerTask() {
+//            override fun run() {
+//                getWeather(mainVM.homeCity)
+//            }
+//        }, 0, 20000)
     }
 
     override fun onDestroy() {
@@ -81,7 +89,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val url = "https://api.openweathermap.org/data/2.5/weather?q=$city&appid=${Constants.API_KEY}"
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
-        return client.newCall(request).execute()
+        try {
+            val response = client.newCall(request).execute()
+            return response
+        } catch(e: Exception) {
+            throw e
+        }
     }
 
     private fun getWeather(city: String) {
@@ -89,17 +102,27 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         CoroutineScope(Dispatchers.IO).launch {
             Log.d("GET WEATHER SCOPE: ", "1")
 
-            val response = makeRequest(city)
-            if (!response.isSuccessful) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(activity, "Failed to get weather data", Toast.LENGTH_SHORT).show()
+            try {
+                val response = makeRequest(city)
+                if (!response.isSuccessful) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Failed to get weather data", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        binding.progressBar.visibility = View.VISIBLE
+                        val data = Gson().fromJson(response.body?.charStream(), WeatherHomeData::class.java)
+                        mainVM.saveHomeWeatherData(data)
+                        updateUI(data)
+                        binding.progressBar.visibility = View.GONE
+                        Toast.makeText(context, "Weather data updated", Toast.LENGTH_SHORT).show()
+                    }
                 }
-            } else {
+            } catch(e: Exception) {
                 withContext(Dispatchers.Main) {
-                    binding.progressBar.visibility = View.VISIBLE
-                    val data = Gson().fromJson(response.body?.charStream(), WeatherHomeData::class.java)
-                    updateUI(data)
                     binding.progressBar.visibility = View.GONE
+                    updateUI(mainVM.getHomeWeatherData())
+                    Toast.makeText(context, "No internet connection. Try again later", Toast.LENGTH_SHORT).show()
                 }
             }
         }

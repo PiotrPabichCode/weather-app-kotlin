@@ -7,10 +7,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.adapters.WeatherForecastAdapter
-import com.example.weatherapp.data.WeatherForecastDay
+import com.example.weatherapp.data.entities.WeatherForecastDay
 import com.example.weatherapp.databinding.FragmentWeatherForecastBinding
 import com.example.weatherapp.utils.Constants
 import com.example.weatherapp.utils.Utils.convertKelvin
@@ -52,35 +52,53 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
         val url = "https://pro.openweathermap.org/data/2.5/forecast/climate?q=$city&appid=${Constants.API_KEY}"
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
-        return client.newCall(request).execute()
+        try {
+            val response = client.newCall(request).execute()
+            return response
+        } catch(e: Exception) {
+            throw e
+        }
     }
 
     private fun getWeather(city: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val response = makeRequest(city)
-            if (!response.isSuccessful) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(activity, "Failed to get weather forecast", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                val json = response.body?.string()
-                val jsonObject = JSONObject(json)
-                withContext(Dispatchers.Main) {
-                    if(isAdded) {
-                        binding.progressBar.visibility = View.VISIBLE
-                        binding.weatherForecastRV.visibility = View.GONE
-                        val adapter = WeatherForecastAdapter(createDays(jsonObject), mainVM)
-                        binding.weatherForecastRV.adapter = adapter
-                        binding.progressBar.visibility = View.GONE
-                        binding.weatherForecastRV.visibility = View.VISIBLE
+            try {
+                val response = makeRequest(city)
+                if (!response.isSuccessful) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Failed to get weather forecast", Toast.LENGTH_SHORT).show()
                     }
+                } else {
+                    val json = response.body?.string()
+                    val jsonObject = JSONObject(json)
+                    withContext(Dispatchers.Main) {
+                        if(isAdded) {
+                            binding.progressBar.visibility = View.VISIBLE
+                            binding.weatherForecastRV.visibility = View.GONE
+                            val adapter = WeatherForecastAdapter(createDays(jsonObject), mainVM)
+                            binding.weatherForecastRV.adapter = adapter
+                            binding.progressBar.visibility = View.GONE
+                            binding.weatherForecastRV.visibility = View.VISIBLE
+                        }
 
+                    }
+                }
+            } catch(e: Exception) {
+                withContext(Dispatchers.Main) {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.weatherForecastRV.visibility = View.GONE
+                    val adapter = WeatherForecastAdapter(mainVM.getWeatherForecastPrediction(), mainVM)
+                    binding.weatherForecastRV.adapter = adapter
+                    binding.progressBar.visibility = View.GONE
+                    binding.weatherForecastRV.visibility = View.VISIBLE
+                    //Toast.makeText(context, "No internet connection. Try again later", Toast.LENGTH_SHORT).show()
                 }
             }
         }
     }
 
-    private fun createDays(jsonObject: JSONObject): List<WeatherForecastDay> = buildList {
+    private fun createDays(jsonObject: JSONObject): List<WeatherForecastDay> {
+        val days = mutableListOf<WeatherForecastDay>()
         val jsonArray = jsonObject.getJSONArray("list")
         for(i in 0 until jsonArray.length()) {
             val dayObject = jsonArray.getJSONObject(i)
@@ -92,8 +110,10 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
             val rain = dayObject.optDouble("rain", 0.0)
 
             val imageURL = "https://openweathermap.org/img/wn/$icon.png"
-            val newDay = WeatherForecastDay(dayName, rain, imageURL,minTemp,maxTemp)
-            add(newDay)
+            val newDay = WeatherForecastDay(day = dayName, rain = rain, weatherIcon = imageURL, minTemp = minTemp, maxTemp = maxTemp)
+            days.add(newDay)
         }
+        mainVM.saveWeatherForecastPrediction(days)
+        return days
     }
 }

@@ -9,9 +9,10 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
-import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.R
+import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.activities.dataStore
-import com.example.weatherapp.data.WeatherForecastDay
+import com.example.weatherapp.data.entities.WeatherForecastDay
 import com.example.weatherapp.databinding.WeatherForecastItemBinding
 
 class WeatherForecastAdapter(private val weatherForecastDays: List<WeatherForecastDay>, private var mainVM: MainViewModel):
@@ -42,11 +43,14 @@ class WeatherForecastAdapter(private val weatherForecastDays: List<WeatherForeca
 
     override fun onBindViewHolder(holder: WeatherForecastViewHolder, position: Int) {
         holder.dayTV.text = weatherForecastDays[position].day
-        holder.rainTV.text = weatherForecastDays[position].rain.toString() + "%"
+        val rain = weatherForecastDays[position].rain
+        holder.rainTV.text = "$rain%"
         downloadWeatherIcon(weatherForecastDays[position].weatherIcon, holder.weatherIV)
         val tempUnit = if (mainVM.isFahrenheitMode) "°F" else "°C"
-        holder.minTempTV.text = weatherForecastDays[position].minTemp.toString() + tempUnit
-        holder.maxTempTV.text = weatherForecastDays[position].maxTemp.toString() + tempUnit
+        val minTemp = weatherForecastDays[position].minTemp
+        val maxTemp = weatherForecastDays[position].maxTemp
+        holder.minTempTV.text = "$minTemp$tempUnit"
+        holder.maxTempTV.text = "$maxTemp$tempUnit"
     }
 
 

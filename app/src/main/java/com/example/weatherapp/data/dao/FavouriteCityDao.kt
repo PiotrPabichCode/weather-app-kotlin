@@ -1,6 +1,7 @@
-package com.example.weatherapp.data
+package com.example.weatherapp.data.dao
 
 import androidx.room.*
+import com.example.weatherapp.data.entities.FavouriteCity
 
 @Dao
 interface FavouriteCityDao {

@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
-import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.example.weatherapp.MainViewModel
+import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.activities.dataStore
 import com.example.weatherapp.databinding.FragmentSettingsBinding

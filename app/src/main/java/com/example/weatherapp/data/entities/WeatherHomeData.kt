@@ -1,6 +1,13 @@
-package com.example.weatherapp.data
+package com.example.weatherapp.data.entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import androidx.room.TypeConverter
+import com.example.weatherapp.data.api.*
+
+@Entity(tableName = "weather_home_table")
 data class WeatherHomeData(
+    @PrimaryKey(autoGenerate = true) val uid: Int = 0,
     val base: String,
     val clouds: Clouds,
     val cod: Int,
