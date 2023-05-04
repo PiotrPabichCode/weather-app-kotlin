@@ -26,7 +26,7 @@ object Utils {
                     results.forEach { result ->
                         val name = result.asJsonObject.get("name").asString
                         val main = result.asJsonObject.getAsJsonObject("main")
-                        val temp = convertKelvin(main.get("temp").asDouble, mainVM)
+                        val temp = main.get("temp").asDouble
                         val sys = result.asJsonObject.getAsJsonObject("sys")
                         val country = sys.get("country").asString
                         val city = FavouriteCity(name = name, country = country, temp = temp)

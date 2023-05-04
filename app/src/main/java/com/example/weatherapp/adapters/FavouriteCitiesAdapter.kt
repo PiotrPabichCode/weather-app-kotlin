@@ -16,6 +16,7 @@ import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.activities.dataStore
 import com.example.weatherapp.data.entities.FavouriteCity
 import com.example.weatherapp.databinding.CityFavouriteItemLayoutBinding
+import com.example.weatherapp.utils.Utils.convertKelvin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -43,8 +44,9 @@ class FavouriteCitiesAdapter(private var cities: ArrayList<FavouriteCity>, priva
     override fun onBindViewHolder(holder: FavouriteCitiesViewHolder, position: Int) {
         val city = cities[position]
         holder.nameTV.text = "${city.name}, ${city.country}"
+        val temp = convertKelvin(city.temp, mainVM)
         val tempUnit = if (mainVM.isFahrenheitMode) "°F" else "°C"
-        holder.tempTV.text = "${city.temp}$tempUnit"
+        holder.tempTV.text = "$temp$tempUnit"
         holder.deleteBTN.setOnClickListener {
             cities.removeAt(holder.adapterPosition)
             mainVM.deleteCity(city)
