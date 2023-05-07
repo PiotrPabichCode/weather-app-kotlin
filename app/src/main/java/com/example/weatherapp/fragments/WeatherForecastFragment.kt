@@ -103,8 +103,8 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
         for(i in 0 until jsonArray.length()) {
             val dayObject = jsonArray.getJSONObject(i)
             val dayName = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH).format(Date(dayObject.getLong("dt") * 1000))
-            val minTemp = convertKelvin(dayObject.getJSONObject("temp").getDouble("min"), mainVM)
-            val maxTemp = convertKelvin(dayObject.getJSONObject("temp").getDouble("max"), mainVM)
+            val minTemp = dayObject.getJSONObject("temp").getDouble("min")
+            val maxTemp = dayObject.getJSONObject("temp").getDouble("max")
             val weatherArray = dayObject.getJSONArray("weather")
             val icon = weatherArray.getJSONObject(0).getString("icon")
             val rain = dayObject.optDouble("rain", 0.0)

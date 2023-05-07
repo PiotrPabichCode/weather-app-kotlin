@@ -18,6 +18,7 @@ import com.example.weatherapp.utils.Utils.convertKelvin
 import com.google.gson.Gson
 import kotlinx.coroutines.*
 import okhttp3.*
+import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.round
@@ -26,6 +27,7 @@ import kotlin.math.round
 class HomeFragment : Fragment(R.layout.fragment_home) {
     private val mainVM by activityViewModels<MainViewModel>()
     private lateinit var binding: FragmentHomeBinding
+    private lateinit var timer : Timer
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -36,22 +38,26 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         handleRefreshAction()
 
         // Thread
-//        val timer = Timer()
-//        timer.scheduleAtFixedRate(object: TimerTask() {
-//            override fun run() {
-//                getWeather(mainVM.homeCity)
-//            }
-//        }, 0, 20000)
+        startTimer()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("HOME FRAGMENT ON DESTROY: ", "1")
+    private fun startTimer() {
+        if (mainVM.intervalTime > 0) {
+            timer = Timer()
+            timer.scheduleAtFixedRate(object : TimerTask() {
+                override fun run() {
+                    getWeather(mainVM.homeCity)
+                }
+            }, 0, mainVM.intervalTime.toLong() * 1000)
+        }
+    }
+    private fun stopTimer() {
+        timer.cancel()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("HOME FRAGMENT ON DESTROY VIEW: ", "1")
+        stopTimer()
     }
 
 //    override fun onResume() {
@@ -120,75 +126,83 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             } catch(e: Exception) {
                 withContext(Dispatchers.Main) {
-                    binding.progressBar.visibility = View.GONE
-                    updateUI(mainVM.getHomeWeatherData())
-                    Toast.makeText(context, "No internet connection. Try again later", Toast.LENGTH_SHORT).show()
+                    Log.d("CITY", mainVM.homeCity)
+                    if(mainVM.homeCity.isNotEmpty()) {
+                        binding.progressBar.visibility = View.GONE
+                        updateUI(mainVM.getHomeWeatherData())
+                    }
+                    if(isAdded) {
+                        val toastContext = context ?: requireContext()
+                        Toast.makeText(toastContext, "No internet connection. Try again later", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
     }
 
     private fun updateUI(data: WeatherHomeData) {
-        val sys = data.sys
-        val location = "${data.name}, ${sys.country}"
+        if(data != null) {
+            val sys = data.sys
+            val location = "${data.name}, ${sys.country}"
 
-        val updatedAt = data.dt
-        val updatedAtText = "Updated at: " + SimpleDateFormat(
-            "dd/MM/yyyy HH:mm",
-            Locale.getDefault()
-        ).format(Date(updatedAt * 1000))
+            val updatedAt = data.dt
+            val updatedAtText = "Updated at: " + SimpleDateFormat(
+                "dd/MM/yyyy HH:mm",
+                Locale.getDefault()
+            ).format(Date(updatedAt * 1000))
 
-        val main = data.main
-        val minTemp = convertKelvin(main.temp_min, mainVM)
-        val maxTemp = convertKelvin(main.temp_max, mainVM)
-        val currTemp = convertKelvin(main.temp, mainVM)
-        Log.d("CURR TEMP: ", currTemp.toString())
+            val main = data.main
+            val minTemp = convertKelvin(main.temp_min, mainVM)
+            val maxTemp = convertKelvin(main.temp_max, mainVM)
+            val currTemp = convertKelvin(main.temp, mainVM)
+            Log.d("CURR TEMP: ", currTemp.toString())
 
-        val tempUnit = if (mainVM.isFahrenheitMode) "°F" else "°C"
-        val currTempText = "$currTemp$tempUnit"
-        val minTempText = "Min: $minTemp$tempUnit"
-        val maxTempText = "Max: $maxTemp$tempUnit"
+            val tempUnit = if (mainVM.isFahrenheitMode) "°F" else "°C"
+            val currTempText = "$currTemp$tempUnit"
+            val minTempText = "Min: $minTemp$tempUnit"
+            val maxTempText = "Max: $maxTemp$tempUnit"
 
-        val pressure = main.pressure
-        val wind = "${data.wind.speed} m/s"
-        val humidity = "${main.humidity} %"
-        val longitude = (round(data.coord.lon * 100) / 100).toString()
-        val latitude = (round(data.coord.lat * 100) / 100).toString()
-        val sunrise = sys.sunrise
-        val sunriseText = SimpleDateFormat(
-            "HH:mm",
-            Locale.getDefault()
-        ).format(Date(sunrise * 1000))
+            val pressure = main.pressure
+            val wind = "${data.wind.speed} m/s"
+            val humidity = "${main.humidity} %"
+            val longitude = (round(data.coord.lon * 100) / 100).toString()
+            val latitude = (round(data.coord.lat * 100) / 100).toString()
+            val sunrise = sys.sunrise
+            val sunriseText = SimpleDateFormat(
+                "HH:mm",
+                Locale.getDefault()
+            ).format(Date(sunrise * 1000))
 
-        val sunset = sys.sunset
-        val sunsetText = SimpleDateFormat(
-            "HH:mm",
-            Locale.getDefault()
-        ).format(Date(sunset * 1000))
+            val sunset = sys.sunset
+            val sunsetText = SimpleDateFormat(
+                "HH:mm",
+                Locale.getDefault()
+            ).format(Date(sunset * 1000))
 
-        val kTemp = main.temp
-        mainVM.kelvinTemp = kTemp
-        val sky = (10000.0 - data.clouds.all) / 100
-        val skyText = "$sky %"
+            val kTemp = main.temp
+            mainVM.kelvinTemp = kTemp
+            val sky = (10000.0 - data.clouds.all) / 100
+            val skyText = "$sky %"
 
-        binding.location.text = location
-        binding.updatedAt.text = updatedAtText
-        binding.currTemp.text = currTempText
-        binding.minTemp.text = minTempText
-        binding.maxTemp.text = maxTempText
+            binding.location.text = location
+            binding.updatedAt.text = updatedAtText
+            binding.currTemp.text = currTempText
+            binding.minTemp.text = minTempText
+            binding.maxTemp.text = maxTempText
 
-        binding.pressure.text = pressure.toString()
-        binding.wind.text = wind
-        binding.humidity.text = humidity
-        binding.longtitude.text = longitude
-        binding.sunrise.text = sunriseText
-        binding.sunset.text = sunsetText
-        binding.kelvinTemp.text = kTemp.toString()
-        binding.sky.text = skyText
-        binding.latitude.text = latitude
+            binding.pressure.text = pressure.toString()
+            binding.wind.text = wind
+            binding.humidity.text = humidity
+            binding.longtitude.text = longitude
+            binding.sunrise.text = sunriseText
+            binding.sunset.text = sunsetText
+            binding.kelvinTemp.text = kTemp.toString()
+            binding.sky.text = skyText
+            binding.latitude.text = latitude
 
-        val weatherIcon = data.weather[0].icon
-        downloadWeatherIcon(weatherIcon, binding.weatherIcon)
+            val weatherIcon = data.weather[0].icon
+            downloadWeatherIcon(weatherIcon, binding.weatherIcon)
+        }
     }
 
     private fun downloadWeatherIcon(iconCode: String, imageView: ImageView) {

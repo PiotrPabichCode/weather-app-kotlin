@@ -20,7 +20,7 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     private val repo2 = WeatherHomeRepository(app.applicationContext)
 
     var homeCity: String = ""
-    var intervalTime: Int = 0
+    var intervalTime: Int = 10
     var isFahrenheitMode: Boolean = false
     var updateHomeData : Boolean = false
     var isProgressBar : Boolean = true

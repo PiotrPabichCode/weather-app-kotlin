@@ -9,6 +9,7 @@ import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.R
 import com.example.weatherapp.adapters.FavouriteCitiesAdapter
 import com.example.weatherapp.databinding.FragmentFavouriteBinding
+import com.example.weatherapp.utils.Utils.searchCities
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

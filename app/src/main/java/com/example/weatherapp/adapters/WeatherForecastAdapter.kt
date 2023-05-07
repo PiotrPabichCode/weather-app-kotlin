@@ -14,6 +14,7 @@ import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.activities.dataStore
 import com.example.weatherapp.data.entities.WeatherForecastDay
 import com.example.weatherapp.databinding.WeatherForecastItemBinding
+import com.example.weatherapp.utils.Utils.convertKelvin
 
 class WeatherForecastAdapter(private val weatherForecastDays: List<WeatherForecastDay>, private var mainVM: MainViewModel):
     RecyclerView.Adapter<WeatherForecastAdapter.WeatherForecastViewHolder>() {
@@ -47,8 +48,8 @@ class WeatherForecastAdapter(private val weatherForecastDays: List<WeatherForeca
         holder.rainTV.text = "$rain%"
         downloadWeatherIcon(weatherForecastDays[position].weatherIcon, holder.weatherIV)
         val tempUnit = if (mainVM.isFahrenheitMode) "°F" else "°C"
-        val minTemp = weatherForecastDays[position].minTemp
-        val maxTemp = weatherForecastDays[position].maxTemp
+        val minTemp = convertKelvin(weatherForecastDays[position].minTemp, mainVM)
+        val maxTemp = convertKelvin(weatherForecastDays[position].maxTemp, mainVM)
         holder.minTempTV.text = "$minTemp$tempUnit"
         holder.maxTempTV.text = "$maxTemp$tempUnit"
     }
