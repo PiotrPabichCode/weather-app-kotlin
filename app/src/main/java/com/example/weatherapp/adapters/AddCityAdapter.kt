@@ -6,7 +6,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.example.weatherapp.R
 import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.data.entities.FavouriteCity
 import com.example.weatherapp.databinding.CityItemAddLayoutBinding

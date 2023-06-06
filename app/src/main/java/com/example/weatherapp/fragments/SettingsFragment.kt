@@ -36,7 +36,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     val dataStoreKey = booleanPreferencesKey("fahrenheit_mode")
                     dataStore.edit { preferences ->
                         preferences[dataStoreKey] = true
-//                        Toast.makeText(context, "Your unit: Fahrenheit", Toast.LENGTH_SHORT).show()
                     }
                 }
                 // Switch checked
@@ -46,7 +45,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     val dataStoreKey = booleanPreferencesKey("fahrenheit_mode")
                     dataStore.edit { preferences ->
                         preferences[dataStoreKey] = false
-//                        Toast.makeText(context, "Your unit: Celsius", Toast.LENGTH_SHORT).show()
                     }
                 }
                 // Switch not checked
@@ -62,7 +60,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
                     val dataStoreKey = intPreferencesKey("interval_time")
                     dataStore.edit { preferences ->
                         preferences[dataStoreKey] = mainVM.intervalTime
-//                        Toast.makeText(context, "Your interval: ${mainVM.intervalTime}s", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

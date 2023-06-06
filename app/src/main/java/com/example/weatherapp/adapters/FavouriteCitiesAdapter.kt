@@ -11,7 +11,6 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.example.weatherapp.R
 import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.activities.dataStore
 import com.example.weatherapp.data.entities.FavouriteCity

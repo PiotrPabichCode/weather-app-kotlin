@@ -13,7 +13,6 @@ import com.example.weatherapp.adapters.WeatherForecastAdapter
 import com.example.weatherapp.data.entities.WeatherForecastDay
 import com.example.weatherapp.databinding.FragmentWeatherForecastBinding
 import com.example.weatherapp.utils.Constants
-import com.example.weatherapp.utils.Utils.convertKelvin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -53,9 +52,8 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
         val request = Request.Builder().url(url).build()
         val client = OkHttpClient()
         try {
-            val response = client.newCall(request).execute()
-            return response
-        } catch(e: Exception) {
+            return client.newCall(request).execute()
+        } catch (e: Exception) {
             throw e
         }
     }
@@ -70,7 +68,7 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
                     }
                 } else {
                     val json = response.body?.string()
-                    val jsonObject = JSONObject(json)
+                    val jsonObject = JSONObject(json.toString())
                     withContext(Dispatchers.Main) {
                         if(isAdded) {
                             binding.progressBar.visibility = View.VISIBLE
@@ -91,7 +89,6 @@ class WeatherForecastFragment : Fragment(R.layout.fragment_weather_forecast) {
                     binding.weatherForecastRV.adapter = adapter
                     binding.progressBar.visibility = View.GONE
                     binding.weatherForecastRV.visibility = View.VISIBLE
-                    //Toast.makeText(context, "No internet connection. Try again later", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -31,11 +31,6 @@ class AddFragment : Fragment(R.layout.fragment_add) {
         handleSearchView()
     }
 
-//    override fun onResume() {
-//        super.onResume()
-//        binding.rvCityList.adapter = AddCityAdapter(emptyList(), mainVM)
-//    }
-
     private fun handleSearchView() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
@@ -52,7 +47,7 @@ class AddFragment : Fragment(R.layout.fragment_add) {
     fun updateSearchResults(query: String) {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val cities = searchCities(query, mainVM)
+                val cities = searchCities(query)
                 withContext(Dispatchers.Main) {
                     binding.rvCityList.adapter = AddCityAdapter(cities, mainVM)
                 }

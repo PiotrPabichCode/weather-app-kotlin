@@ -32,7 +32,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentHomeBinding.bind(view)
-        Log.d("HOME FRAGMENT ON VIEW CREATED: ", "BINDING CREATED")
         getWeather(mainVM.homeCity)
         handleSearchAction()
         handleRefreshAction()
@@ -59,12 +58,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onDestroyView()
         stopTimer()
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        Log.d("ON RESUME: ", "1")
-//        getWeather(mainVM.homeCity)
-//    }
 
     private fun handleSearchAction() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -104,10 +97,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun getWeather(city: String) {
-        Log.d("GET WEATHER BEFORE: ", city)
         CoroutineScope(Dispatchers.IO).launch {
-            Log.d("GET WEATHER SCOPE: ", "1")
-
             try {
                 val response = makeRequest(city)
                 if (!response.isSuccessful) {
@@ -126,7 +116,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             } catch(e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Log.d("CITY", mainVM.homeCity)
                     if(mainVM.homeCity.isNotEmpty()) {
                         binding.progressBar.visibility = View.GONE
                         updateUI(mainVM.getHomeWeatherData())

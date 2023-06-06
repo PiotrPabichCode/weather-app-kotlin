@@ -23,7 +23,6 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
     var intervalTime: Int = 10
     var isFahrenheitMode: Boolean = false
     var updateHomeData : Boolean = false
-    var isProgressBar : Boolean = true
     var favouriteCities : ArrayList<FavouriteCity> = arrayListOf()
     var kelvinTemp: Double = 0.0
 

@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
-import com.example.weatherapp.R
 import com.example.weatherapp.view_models.MainViewModel
 import com.example.weatherapp.activities.dataStore
 import com.example.weatherapp.data.entities.WeatherForecastDay

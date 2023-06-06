@@ -12,7 +12,7 @@ import kotlin.math.round
 
 object Utils {
 
-    suspend fun searchCities(query: String, mainVM: MainViewModel): List<FavouriteCity> = withContext(Dispatchers.IO) {
+    suspend fun searchCities(query: String): List<FavouriteCity> = withContext(Dispatchers.IO) {
         val url = "https://api.openweathermap.org/data/2.5/find?q=$query&type=like&appid=${Constants.API_KEY}"
         val client = OkHttpClient()
         val request = Request.Builder().url(url).build()
@@ -21,9 +21,8 @@ object Utils {
             val body = response.body?.string()
             val cities = mutableListOf<FavouriteCity>()
             if (body != null) {
-                val results = Gson().fromJson(body, JsonObject::class.java).getAsJsonArray("list")
-                if (results != null) {
-                    results.forEach { result ->
+                Gson().fromJson(body, JsonObject::class.java).getAsJsonArray("list")
+                    ?.forEach { result ->
                         val name = result.asJsonObject.get("name").asString
                         val main = result.asJsonObject.getAsJsonObject("main")
                         val temp = main.get("temp").asDouble
@@ -32,7 +31,6 @@ object Utils {
                         val city = FavouriteCity(name = name, country = country, temp = temp)
                         cities.add(city)
                     }
-                }
             }
             cities
         } catch(e: Exception) {
